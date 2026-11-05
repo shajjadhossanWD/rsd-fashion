@@ -43,6 +43,6 @@ describe('Footer', () => {
     renderWithProviders(<Footer />)
 
     expect(screen.getByText(new RegExp(`© ${new Date().getFullYear()}`))).toBeInTheDocument()
-    expect(screen.getByText('Creative-Hand')).toBeInTheDocument()
+    expect(screen.getByText(siteConfig.credit.name, { selector: 'span' })).toBeInTheDocument()
   })
 })

@@ -12,7 +12,9 @@ function required(key: keyof ImportMetaEnv, fallback?: string): string {
 
 export const env = {
   appName: required('VITE_APP_NAME', 'RSD Fashion'),
-  apiBaseUrl: required('VITE_API_BASE_URL'),
+  // Fallback matches .env.example, so a deploy without env vars (e.g. a fresh Vercel
+  // project) still boots — this is read at startup, and a throw here blanks every page.
+  apiBaseUrl: required('VITE_API_BASE_URL', 'https://fakestoreapi.com'),
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
 } as const
