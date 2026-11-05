@@ -1,0 +1,131 @@
+@import 'tailwindcss';
+
+/* Wide-but-short screens: phones in landscape, small laptop windows. Use as `short:…`. */
+@custom-variant short (@media (orientation: landscape) and (max-height: 35rem));
+
+/* Design tokens — use as `bg-brand`, `text-muted`, `font-display`, etc. */
+@theme {
+  --font-sans: 'Lato', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display', ui-serif, Georgia, serif;
+  --font-condensed: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+  --font-roboto: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #231f20;
+  --color-brand-foreground: #ffffff;
+  --color-accent: #f2c230;
+  --color-accent-hover: #e5b31c;
+  --color-leaf: #5f9a55;
+  --color-surface: #f7f5f1;
+  --color-muted: #6b6b6b;
+  --color-border: #e4e1da;
+}
+
+/*
+ * Gentle vertical drift. Timing is read per element from --float-duration,
+ * --float-delay and --float-distance, so siblings can move independently.
+ * (Defined as a utility, not an `--animate-*` theme token: theme tokens resolve
+ * on :root, where per-element custom properties don't exist.)
+ */
+@utility animate-float {
+  animation: float var(--float-duration, 6s) ease-in-out var(--float-delay, 0s) infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 var(--float-distance, -14px);
+  }
+}
+
+/*
+ * Entrance: glides down from above the viewport and eases into place, sinking a few
+ * pixels past its resting point before settling back. One continuous curve (no hard
+ * impact), so it reads as smooth and unhurried. Tune speed with --drop-duration.
+ */
+@utility animate-drop-in {
+  animation: drop-in var(--drop-duration, 1.8s) cubic-bezier(0.34, 1.18, 0.64, 1) 0.2s both;
+}
+
+@keyframes drop-in {
+  from {
+    translate: 0 -100svh;
+    opacity: 0;
+  }
+  to {
+    translate: 0 0;
+    opacity: 1;
+  }
+}
+
+/* Soft pulse for decorative sparkles. Per-element timing via --twinkle-* properties. */
+@utility animate-twinkle {
+  animation: twinkle var(--twinkle-duration, 4s) ease-in-out var(--twinkle-delay, 0s) infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.9;
+    scale: 1;
+  }
+  50% {
+    opacity: 0.25;
+    scale: 0.6;
+  }
+}
+
+/*
+ * Figure-8 ("two stacked pills") photo frame from the design. The path is in a 0–1 box
+ * and stretched to the element (preserveAspectRatio=none + mask-size 100%), so it fits
+ * any size; keep the element near a 0.72 aspect ratio for the intended proportions.
+ */
+@utility mask-figure8 {
+  --figure8: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cpath d='M.2521 0C.1129 0 0 .1129 0 .2521c0 .1391.1127.2519.2517.2521H.2479C.111.5042 0 .6152 0 .7521 0 .889.111 1 .2479 1H.7521C.889 1 1 .889 1 .7521 1 .6152.889.5042.7521.5042H.7483C.8873.504 1 .3912 1 .2521 1 .1129.8871 0 .7479 0H.2521Z'/%3E%3C/svg%3E");
+  -webkit-mask: var(--figure8) center / 100% 100% no-repeat;
+  mask: var(--figure8) center / 100% 100% no-repeat;
+}
+
+/* Reduced-motion alternative to entrances like drop-in. */
+@utility animate-fade-in {
+  animation: fade-in 0.6s 0.15s ease-out both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer base {
+  /* Fixed-header height, shared by Header, the home hero and PageContainer. */
+  :root {
+    --header-h: 3.75rem;
+
+    @variant sm {
+      --header-h: 4.25rem;
+    }
+    @variant xl {
+      --header-h: 5rem;
+    }
+    @variant 2xl {
+      --header-h: 5.5rem;
+    }
+  }
+
+  html {
+    /* Smooth in-page scrolling, except for visitors who prefer reduced motion. */
+    @apply antialiased motion-safe:scroll-smooth;
+  }
+
+  /* Anchor targets (e.g. /products#knitwear) stop just below the fixed header. */
+  [id] {
+    scroll-margin-top: calc(var(--header-h) + 0.75rem);
+  }
+
+  body {
+    @apply bg-surface font-sans text-brand;
+  }
+}
